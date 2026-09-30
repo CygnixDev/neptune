@@ -356,7 +356,14 @@ public class AstBuilder(private val source: String, private val lineOffset: Int,
         get() {
             // column offset only if we're on the first line since new line will reset the offset
             val columnOffset = if (start.line == 1) columnOffset else 0
-            return NodeSourceLocation(source, start.line + lineOffset, start.charPositionInLine + columnOffset + 1)
+            return NodeSourceLocation(
+                source,
+                start.line + lineOffset,
+                start.charPositionInLine + columnOffset + 1,
+                startOffset = start.startIndex,
+                // a rule that matched nothing stops before it starts
+                endOffset = maxOf(start.startIndex, (stop ?: start).stopIndex + 1),
+            )
         }
 
     /**
@@ -366,7 +373,13 @@ public class AstBuilder(private val source: String, private val lineOffset: Int,
         get() {
             // column offset only if we're on the first line since new line will reset the offset
             val columnOffset = if (line == 1) columnOffset else 0
-            return NodeSourceLocation(source, line + lineOffset, charPositionInLine + columnOffset + 1)
+            return NodeSourceLocation(
+                source,
+                line + lineOffset,
+                charPositionInLine + columnOffset + 1,
+                startOffset = startIndex,
+                endOffset = stopIndex + 1,
+            )
         }
 
     /**

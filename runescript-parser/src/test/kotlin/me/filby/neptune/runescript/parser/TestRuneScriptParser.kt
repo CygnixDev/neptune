@@ -140,7 +140,7 @@ class TestRuneScriptParser {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["basic_interop", "escape", "tags", "ptag"])
+    @ValueSource(strings = ["basic_interop", "escape", "tags", "ptag", "pronoun"])
     @Order(EXPRESSION)
     fun testJoinedString(test: String) {
         runFileTest("expressions/joined_string/$test", RuneScriptParser::joinedString)

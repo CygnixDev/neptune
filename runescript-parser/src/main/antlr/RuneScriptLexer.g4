@@ -114,6 +114,7 @@ STRING_TEXT         : (StringEscapeSequence | ~('\\' | '"' | '<' | '\r' | '\n'))
 STRING_TAG          : '<' Tag ('=' ~('<' | '>')+)? '>' ;
 STRING_CLOSE_TAG    : '</' Tag '>' ;
 STRING_PARTIAL_TAG  : '<' Tag '=' ;
+STRING_SWITCH_TAG   : '<switch,' -> type(STRING_PARTIAL_TAG) ;
 STRING_P_TAG        : '<p,' ~('<' | '>')+ '>'  ;
 STRING_EXPR_START   : '<' -> pushMode(DEFAULT_MODE) ;
 STRING_EXPR_END     : '>' ;
@@ -129,6 +130,8 @@ fragment Tag
     : 'br'
     | 'col'
     | 'str'
+    | 'str_he'
+    | 'str_she'
     | 'shad'
     | 'u'
     | 'img'

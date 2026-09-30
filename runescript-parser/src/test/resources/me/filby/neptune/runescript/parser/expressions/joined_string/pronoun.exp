@@ -1,0 +1,17 @@
+JoinedStringExpression() 1:1
+ BasicStringPart(value="<str_he=") 1:2
+ ExpressionStringPart() 1:10
+  LocalVariableExpression() 1:11
+   Identifier(text="he") 1:12
+ BasicStringPart(value=">") 1:15
+ BasicStringPart(value="<str_she=") 1:16
+ ExpressionStringPart() 1:25
+  LocalVariableExpression() 1:26
+   Identifier(text="she") 1:27
+ BasicStringPart(value=">") 1:31
+ BasicStringPart(value="<switch,") 1:32
+ BasicStringPart(value="pronoun,"") 1:40
+ BasicStringPart(value="<str_he>") 1:50
+ BasicStringPart(value="","") 1:58
+ BasicStringPart(value="<str_she>") 1:63
+ BasicStringPart(value="","">") 1:72

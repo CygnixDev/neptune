@@ -27,6 +27,24 @@ private boolean startsWithLiteralPlus() {
     String head = text.substring(0, text.indexOf('+'));
     return head.matches("[0-9]+|0[xX][0-9a-fA-F]+|[0-9]+(_[0-9]+){4}|true|false|null");
 }
+
+// line and column of each open string's quote, innermost last
+private final java.util.ArrayDeque<int[]> openQuotes = new java.util.ArrayDeque<>();
+
+// reports the innermost open string as unterminated, at its opening quote
+private void reportUnterminatedString() {
+    int[] quote = openQuotes.pop();
+    getErrorListenerDispatch().syntaxError(this, null, quote[0], quote[1], "unterminated string", null);
+}
+
+// strings still open at the end of input are unterminated too
+@Override
+public Token emitEOF() {
+    while (!openQuotes.isEmpty()) {
+        reportUnterminatedString();
+    }
+    return super.emitEOF();
+}
 }
 
 // symbols
@@ -97,7 +115,8 @@ fragment CharEscapeSequence
     ;
 
 // special
-QUOTE_OPEN      : '"' {depth++;} -> pushMode(String) ;
+QUOTE_OPEN      : '"' {depth++; openQuotes.push(new int[] {_tokenStartLine, _tokenStartCharPositionInLine});}
+                  -> pushMode(String) ;
 // config names may contain '+' (e.g. dragon_dagger_p++, antidote+4, cheese+tom_batta). a name after a prefix
 // ($a+1, ~b+1) or a literal (1+2, 0xff+1, true+1) still ends at the '+', but an unprefixed config name doesn't:
 // calc(bones+1) reads as the name bones+1, so write calc(bones + 1)
@@ -109,7 +128,9 @@ WHITESPACE      : [ \t\n\r]+ -> channel(HIDDEN) ;
 // string interpolation support
 mode String ;
 
-QUOTE_CLOSE         : '"' {depth--;} -> popMode ;
+QUOTE_CLOSE         : '"' {depth--; openQuotes.pop();} -> popMode ;
+// a line break inside a string: report it and end the string there, so the lines after it lex normally
+STRING_UNTERMINATED : '\r'? '\n' {depth--; reportUnterminatedString();} -> type(QUOTE_CLOSE), popMode ;
 STRING_TEXT         : (StringEscapeSequence | ~('\\' | '"' | '<' | '\r' | '\n'))+ ;
 STRING_TAG          : '<' Tag ('=' ~('<' | '>')+)? '>' ;
 STRING_CLOSE_TAG    : '</' Tag '>' ;

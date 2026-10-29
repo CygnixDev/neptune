@@ -85,7 +85,7 @@ STRING_SWITCH_TAG   : '<switch,' -> type(STRING_PARTIAL_TAG) ;
 STRING_P_TAG        : '<p,' ~('<' | '>')+ '>'  ;
 STRING_EXPR_START   : '<' -> pushMode(DEFAULT_MODE) ;
 STRING_EXPR_END     : '>' ;
-STRING_TEMPLATE     : {stringTemplates}? '<text_pronoun(' ~[<>\r\n]* ')>' ;
+STRING_TEMPLATE     : '<text_pronoun(' ~[<>\r\n]* ')>' {stringTemplates}? ;
 
 // allows escaping specific characters in a string
 fragment StringEscapeSequence
